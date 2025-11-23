@@ -17,9 +17,14 @@ const MIN_PLAYBACK_BUFFER = 0.05; // Minimum 50ms of audio before starting playb
 
 export type ConnectionState = 'idle' | 'connecting' | 'connected' | 'error';
 
+interface UseLiveApiOptions {
+  systemPrompt?: string;
+  testScenario?: string;
+}
+
 interface UseLiveApiReturn {
   connectionState: ConnectionState;
-  connect: () => Promise<void>;
+  connect: (options?: UseLiveApiOptions) => Promise<void>;
   disconnect: () => Promise<void>;
   volume: number;
   setVolume: (vol: number) => void;
@@ -135,7 +140,7 @@ export function useLiveApi(): UseLiveApiReturn {
     nextStartTimeRef.current = 0;
   }, []);
 
-  const connect = useCallback(async () => {
+  const connect = useCallback(async (options?: UseLiveApiOptions) => {
     try {
       setConnectionState('connecting');
       setError(null);
@@ -169,6 +174,13 @@ export function useLiveApi(): UseLiveApiReturn {
 
       const ai = new GoogleGenAI({ apiKey });
 
+      // Build system instruction with agent config
+      let systemInstruction = options?.systemPrompt || 'You are ConvoBridge, a helpful AI calling agent. Be concise, friendly, and professional in your responses. Help users with their inquiries.';
+      
+      if (options?.testScenario) {
+        systemInstruction += `\n\nTest Scenario: The user is calling with the following scenario: ${options.testScenario}. Respond appropriately to this caller type.`;
+      }
+
       // Connect to Gemini Live
       const sessionPromise = ai.live.connect({
         model: MODEL_NAME,
@@ -181,8 +193,7 @@ export function useLiveApi(): UseLiveApiReturn {
               },
             },
           },
-          systemInstruction:
-            'You are ConvoBridge, a helpful AI calling agent. Be concise, friendly, and professional in your responses. Help users with their inquiries.',
+          systemInstruction,
         },
         callbacks: {
           onopen: () => {

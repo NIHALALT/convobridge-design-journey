@@ -12,8 +12,8 @@ export default function Home() {
           <div className="font-bold text-xl">ConvoBridge</div>
           <div className="hidden md:flex items-center gap-8">
             <a href="#solutions" className="text-caption text-muted-foreground hover:text-foreground transition-colors">Solutions</a>
-            <a href="#pricing" className="text-caption text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
-            <a href="#about" className="text-caption text-muted-foreground hover:text-foreground transition-colors">About</a>
+            <a href="/pricing" className="text-caption text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
+            <a href="/about" className="text-caption text-muted-foreground hover:text-foreground transition-colors">About</a>
             <Button variant="ghost" size="sm">Login</Button>
             <Button size="sm">Get Started</Button>
           </div>

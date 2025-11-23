@@ -5,6 +5,16 @@ import { cn } from '@/lib/utils';
 
 type WidgetProps = {
   variant?: "floating" | "hero";
+  agentConfig?: {
+    name: string;
+    voice: string;
+    languages: string[];
+    personality: string;
+    template: string;
+    systemPrompt?: string;
+  };
+  testScenario?: string;
+  onCallEnd?: (duration: number, transcript: string) => void;
 };
 
 // Internal Button component 
@@ -38,14 +48,26 @@ const Button: React.FC<React.ButtonHTMLAttributes<HTMLButtonElement> & {
   );
 };
 
-export function LiveDemoWidget({ variant = "floating" }: WidgetProps) {
+export function LiveDemoWidget({ variant = "floating", agentConfig, testScenario, onCallEnd }: WidgetProps) {
   const { connectionState, connect, disconnect, volume, setVolume, error } = useLiveApi();
+  const [callStartTime, setCallStartTime] = React.useState<number | null>(null);
+  const [callTranscript, setCallTranscript] = React.useState<string>("");
 
   const handleCall = () => {
-    connect();
+    setCallStartTime(Date.now());
+    setCallTranscript("");
+    connect({
+      systemPrompt: agentConfig?.systemPrompt || undefined,
+      testScenario: testScenario || undefined
+    });
   };
 
   const handleEnd = () => {
+    if (callStartTime && onCallEnd) {
+      const duration = Math.round((Date.now() - callStartTime) / 1000);
+      const transcript = callTranscript || "Call completed successfully. [No transcript recorded]";
+      onCallEnd(duration, transcript);
+    }
     disconnect();
   };
 
@@ -65,7 +87,9 @@ export function LiveDemoWidget({ variant = "floating" }: WidgetProps) {
           <div className="space-y-6">
             <div>
               <h4 className="text-2xl font-bold text-gray-950 dark:text-gray-50">Try it now</h4>
-              <p className="text-gray-600 dark:text-gray-400">Have a live conversation with ConvoBridge</p>
+              <p className="text-gray-600 dark:text-gray-400">
+                {agentConfig ? `Test ${agentConfig.name}` : "Have a live conversation with ConvoBridge"}
+              </p>
             </div>
 
             {error && (
@@ -115,8 +139,17 @@ export function LiveDemoWidget({ variant = "floating" }: WidgetProps) {
                   <div className="flex items-center gap-3">
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Listening...</span>
                   </div>
+
+                  {agentConfig && (
+                    <div className="text-xs text-gray-600 dark:text-gray-400 space-y-1 pt-3 border-t">
+                      <p><strong>Agent:</strong> {agentConfig.name}</p>
+                      <p><strong>Voice:</strong> {agentConfig.voice}</p>
+                      <p><strong>Languages:</strong> {agentConfig.languages.join(", ")}</p>
+                      {testScenario && <p><strong>Scenario:</strong> {testScenario}</p>}
+                    </div>
+                  )}
                   
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 pt-2">
                     <Volume2 className="h-4 w-4 text-gray-500 dark:text-gray-400 flex-shrink-0" />
                     <input
                       type="range"
