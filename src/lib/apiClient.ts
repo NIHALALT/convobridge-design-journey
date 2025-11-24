@@ -128,6 +128,33 @@ class APIClient {
     return response.data;
   }
 
+  // Context Management
+  async processFileForContext(agentId: string, file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('agentId', agentId);
+    
+    const response = await this.client.post('/context/process', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  }
+
+  async saveContext(agentId: string, context: string) {
+    const response = await this.client.post('/context/save', { agentId, context });
+    return response.data;
+  }
+
+  async getContext(agentId: string) {
+    const response = await this.client.get(`/context/${agentId}`);
+    return response.data;
+  }
+
+  async crawlWebsiteForContext(agentId: string, url: string) {
+    const response = await this.client.post('/context/crawl', { agentId, url });
+    return response.data;
+  }
+
   isAuthenticated(): boolean {
     return !!this.token;
   }

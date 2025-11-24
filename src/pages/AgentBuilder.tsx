@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { LiveDemoWidget } from "@/components/LiveDemoWidget";
+import { ContextManager } from "@/components/ContextManager";
 
 interface TestCall {
   id: string;
@@ -418,73 +419,38 @@ export default function AgentBuilder() {
                   <p className="text-muted-foreground">Provide files, data, and integrations to enhance your agent's knowledge.</p>
                 </div>
 
-                <div className="space-y-4">
-                  {/* Knowledge Base Upload */}
-                  <div 
-                    onClick={() => {
-                      // Simulate file selection
-                      setUploadedFiles([...(uploadedFiles.length === 0 ? ["product-guide.pdf", "faq.txt"] : uploadedFiles)]);
-                    }}
-                    className="border-2 border-dashed rounded-lg p-8 text-center hover:border-primary/50 transition-colors cursor-pointer hover:bg-primary/2.5"
-                  >
-                    <Plus className="h-8 w-8 text-muted-foreground mx-auto mb-3" />
-                    <h3 className="font-semibold mb-1">Upload Knowledge Files</h3>
-                    <p className="text-sm text-muted-foreground mb-4">PDF, TXT, CSV or DOCX files (Max 50MB)</p>
-                    <Button variant="outline" size="sm">Choose Files</Button>
-                    {uploadedFiles.length > 0 && (
-                      <div className="mt-4 pt-4 border-t border-border/50">
-                        <p className="text-xs text-success font-medium mb-2">✓ {uploadedFiles.length} file(s) uploaded</p>
-                        {uploadedFiles.map((file, idx) => (
-                          <div key={idx} className="text-xs text-muted-foreground">{file}</div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                <ContextManager agentId="demo-agent-123" />
 
-                  {/* URL Integration */}
-                  <div className="bg-card border rounded-lg p-6 space-y-3">
-                    <label className="text-sm font-semibold">Add Website/URL</label>
-                    <Input 
-                      placeholder="https://example.com" 
-                      className="w-full" 
-                      value={websiteUrl}
-                      onChange={(e) => setWebsiteUrl(e.target.value)}
-                    />
-                    <Button variant="outline" size="sm">Crawl Website</Button>
-                    <p className="text-xs text-muted-foreground">We'll extract content from your website for the agent to reference</p>
-                  </div>
-
-                  {/* API Integrations */}
-                  <div className="bg-card border rounded-lg p-6 space-y-4">
-                    <h3 className="font-semibold">Integrations</h3>
-                    <div className="space-y-2">
-                      {integrations.map((integration) => (
-                        <button
-                          key={integration.name}
-                          onClick={() => toggleIntegration(integration.name)}
-                          className={`w-full flex items-center justify-between p-3 border rounded-lg transition-all ${
-                            connectedIntegrations[integration.name.toLowerCase() as keyof typeof connectedIntegrations]
-                              ? "border-primary bg-primary/5"
-                              : "border-border hover:border-primary/50 hover:bg-muted/30"
-                          }`}
+                {/* API Integrations */}
+                <div className="bg-card border rounded-lg p-6 space-y-4">
+                  <h3 className="font-semibold">Integrations (Coming Soon)</h3>
+                  <div className="space-y-2">
+                    {integrations.map((integration) => (
+                      <button
+                        key={integration.name}
+                        onClick={() => toggleIntegration(integration.name)}
+                        className={`w-full flex items-center justify-between p-3 border rounded-lg transition-all ${
+                          connectedIntegrations[integration.name.toLowerCase() as keyof typeof connectedIntegrations]
+                            ? "border-primary bg-primary/5"
+                            : "border-border hover:border-primary/50 hover:bg-muted/30"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span className="text-lg">{integration.icon}</span>
+                          <span className="text-sm font-medium">{integration.name}</span>
+                        </div>
+                        <Button 
+                          variant={connectedIntegrations[integration.name.toLowerCase() as keyof typeof connectedIntegrations] ? "default" : "outline"} 
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleIntegration(integration.name);
+                          }}
                         >
-                          <div className="flex items-center gap-3">
-                            <span className="text-lg">{integration.icon}</span>
-                            <span className="text-sm font-medium">{integration.name}</span>
-                          </div>
-                          <Button 
-                            variant={connectedIntegrations[integration.name.toLowerCase() as keyof typeof connectedIntegrations] ? "default" : "outline"} 
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleIntegration(integration.name);
-                            }}
-                          >
-                            {connectedIntegrations[integration.name.toLowerCase() as keyof typeof connectedIntegrations] ? "Connected" : "Connect"}
-                          </Button>
-                        </button>
-                      ))}
-                    </div>
+                          {connectedIntegrations[integration.name.toLowerCase() as keyof typeof connectedIntegrations] ? "Connected" : "Connect"}
+                        </Button>
+                      </button>
+                    ))}
                   </div>
                 </div>
               </div>
