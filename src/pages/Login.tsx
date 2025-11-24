@@ -1,17 +1,43 @@
+
 import { ArrowRight, Eye, EyeOff, Github } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { apiClient } from "@/lib/apiClient";
+
+
+const schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const form = useForm({
+    resolver: zodResolver(schema),
+    mode: "onChange",
+    defaultValues: { email: "", password: "" },
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle login logic
-    console.log("Login attempt:", { email, password });
+  const onSubmit = async (values: any) => {
+    setLoading(true);
+    try {
+      await apiClient.login(values.email, values.password);
+      toast.success("Login successful! Redirecting...");
+      setTimeout(() => navigate("/dashboard"), 1200);
+    } catch (err: any) {
+      const message = err.response?.data?.error || "Login failed. Please try again.";
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -33,7 +59,7 @@ export default function Login() {
           </div>
 
           {/* Login Form */}
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             {/* Email Field */}
             <div className="space-y-2">
               <label htmlFor="email" className="text-body-small font-semibold">Email</label>
@@ -41,11 +67,13 @@ export default function Login() {
                 id="email"
                 type="email"
                 placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
+                {...form.register("email")}
+                disabled={loading}
                 className="h-12 text-base"
               />
+              {form.formState.errors.email && (
+                <div className="text-destructive text-sm mt-1">{form.formState.errors.email.message as string}</div>
+              )}
             </div>
 
             {/* Password Field */}
@@ -61,13 +89,13 @@ export default function Login() {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
+                  {...form.register("password")}
+                  disabled={loading}
                   className="h-12 text-base pr-12"
                 />
                 <button
                   type="button"
+                  tabIndex={-1}
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 >
@@ -78,6 +106,9 @@ export default function Login() {
                   )}
                 </button>
               </div>
+              {form.formState.errors.password && (
+                <div className="text-destructive text-sm mt-1">{form.formState.errors.password.message as string}</div>
+              )}
             </div>
 
             {/* Remember Me */}
@@ -86,6 +117,7 @@ export default function Login() {
                 type="checkbox"
                 id="remember"
                 className="w-4 h-4 rounded border border-gray-300 cursor-pointer"
+                disabled={loading}
               />
               <label htmlFor="remember" className="text-body-small text-muted-foreground cursor-pointer">
                 Remember me
@@ -93,9 +125,17 @@ export default function Login() {
             </div>
 
             {/* Submit Button */}
-            <Button type="submit" size="lg" className="w-full text-base">
-              Sign In
-              <ArrowRight className="ml-2 h-5 w-5" />
+            <Button type="submit" size="lg" className="w-full text-base" disabled={loading || !form.formState.isValid}>
+              {loading ? (
+                <>
+                  <span className="animate-spin mr-2">⏳</span> Signing In...
+                </>
+              ) : (
+                <>
+                  Sign In
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </>
+              )}
             </Button>
           </form>
 

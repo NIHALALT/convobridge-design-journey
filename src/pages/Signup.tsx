@@ -1,19 +1,45 @@
+
 import { ArrowRight, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { apiClient } from "@/lib/apiClient";
+
+
+const schema = z.object({
+  name: z.string().min(2, "Name is required"),
+  email: z.string().email(),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+  company: z.string().optional(),
+});
 
 export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [company, setCompany] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const form = useForm({
+    resolver: zodResolver(schema),
+    mode: "onChange",
+    defaultValues: { name: "", email: "", password: "", company: "" },
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle signup logic
-    console.log("Signup attempt:", { email, password, name, company });
+  const onSubmit = async (values: any) => {
+    setLoading(true);
+    try {
+      await apiClient.signup(values.email, values.password, values.name, values.company);
+      toast.success("Signup successful! Redirecting...");
+      setTimeout(() => navigate("/dashboard"), 1200);
+    } catch (err: any) {
+      const message = err.response?.data?.error || "Signup failed. Please try again.";
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -30,18 +56,20 @@ export default function Signup() {
               Sign up to get started with ConvoBridge
             </p>
           </div>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-2">
               <label htmlFor="name" className="text-body-small font-semibold">Name</label>
               <Input
                 id="name"
                 type="text"
                 placeholder="Your name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
+                {...form.register("name")}
+                disabled={loading}
                 className="h-12 text-base"
               />
+              {form.formState.errors.name && (
+                <div className="text-destructive text-sm mt-1">{form.formState.errors.name.message as string}</div>
+              )}
             </div>
             <div className="space-y-2">
               <label htmlFor="email" className="text-body-small font-semibold">Email</label>
@@ -49,11 +77,13 @@ export default function Signup() {
                 id="email"
                 type="email"
                 placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
+                {...form.register("email")}
+                disabled={loading}
                 className="h-12 text-base"
               />
+              {form.formState.errors.email && (
+                <div className="text-destructive text-sm mt-1">{form.formState.errors.email.message as string}</div>
+              )}
             </div>
             <div className="space-y-2">
               <label htmlFor="company" className="text-body-small font-semibold">Company (optional)</label>
@@ -61,8 +91,8 @@ export default function Signup() {
                 id="company"
                 type="text"
                 placeholder="Your company"
-                value={company}
-                onChange={(e) => setCompany(e.target.value)}
+                {...form.register("company")}
+                disabled={loading}
                 className="h-12 text-base"
               />
             </div>
@@ -73,13 +103,13 @@ export default function Signup() {
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
+                  {...form.register("password")}
+                  disabled={loading}
                   className="h-12 text-base pr-12"
                 />
                 <button
                   type="button"
+                  tabIndex={-1}
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 >
@@ -90,10 +120,21 @@ export default function Signup() {
                   )}
                 </button>
               </div>
+              {form.formState.errors.password && (
+                <div className="text-destructive text-sm mt-1">{form.formState.errors.password.message as string}</div>
+              )}
             </div>
-            <Button type="submit" size="lg" className="w-full text-base">
-              Sign Up
-              <ArrowRight className="ml-2 h-5 w-5" />
+            <Button type="submit" size="lg" className="w-full text-base" disabled={loading || !form.formState.isValid}>
+              {loading ? (
+                <>
+                  <span className="animate-spin mr-2">⏳</span> Signing Up...
+                </>
+              ) : (
+                <>
+                  Sign Up
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </>
+              )}
             </Button>
           </form>
           <p className="text-center text-body-small text-muted-foreground">
