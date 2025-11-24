@@ -2,23 +2,12 @@ import { ArrowRight, CheckCircle2, Zap, Shield, Globe2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LiveDemoWidget } from "@/components/LiveDemoWidget";
 import { FlowLines } from "@/components/FlowLines";
+import NavBar from "@/components/NavBar";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full glass z-40 border-b">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="font-bold text-xl">ConvoBridge</div>
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#solutions" className="text-caption text-muted-foreground hover:text-foreground transition-colors">Solutions</a>
-            <a href="/pricing" className="text-caption text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
-            <a href="/about" className="text-caption text-muted-foreground hover:text-foreground transition-colors">About</a>
-            <Button variant="ghost" size="sm">Login</Button>
-            <Button size="sm">Get Started</Button>
-          </div>
-        </div>
-      </nav>
+      <NavBar />
 
       {/* Hero Section */}
       <section className="relative pt-32 pb-24 overflow-hidden">
@@ -157,12 +146,22 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t py-12">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-5 gap-8 mb-8">
             <div>
               <div className="font-bold text-xl mb-4">ConvoBridge</div>
-              <p className="text-caption text-muted-foreground">
+              <p className="text-caption text-muted-foreground mb-4">
                 AI calling agents that never sleep.
               </p>
+              <div className="space-y-2">
+                <p className="text-caption text-muted-foreground">
+                  <span className="font-semibold text-foreground">Email:</span><br />
+                  <a href="mailto:contactconvobridge@gmail.com" className="hover:text-primary transition-colors">contactconvobridge@gmail.com</a>
+                </p>
+                <p className="text-caption text-muted-foreground">
+                  <span className="font-semibold text-foreground">Phone:</span><br />
+                  <a href="tel:+919847493118" className="hover:text-primary transition-colors">+91 9847 493118</a>
+                </p>
+              </div>
             </div>
             <div>
               <h4 className="font-semibold mb-4">Product</h4>
@@ -175,9 +174,9 @@ export default function Home() {
             <div>
               <h4 className="font-semibold mb-4">Company</h4>
               <div className="space-y-2">
-                <a href="#" className="block text-caption text-muted-foreground hover:text-foreground transition-colors">About</a>
-                <a href="#" className="block text-caption text-muted-foreground hover:text-foreground transition-colors">Blog</a>
-                <a href="#" className="block text-caption text-muted-foreground hover:text-foreground transition-colors">Careers</a>
+                <a href="/about" className="block text-caption text-muted-foreground hover:text-foreground transition-colors">About</a>
+                <a href="/contact-us" className="block text-caption text-muted-foreground hover:text-foreground transition-colors">Contact</a>
+                <a href="/careers" className="block text-caption text-muted-foreground hover:text-foreground transition-colors">Careers</a>
               </div>
             </div>
             <div>
