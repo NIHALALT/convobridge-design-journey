@@ -16,6 +16,9 @@ dotenv.config();
 
 const app: Express = express();
 
+// Request logger for debugging
+app.use((req, res, next) => { console.log("⟳", req.method, req.originalUrl); next(); });
+
 // Middleware
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
@@ -37,6 +40,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/agents', agentRoutes);
 app.use('/api/calls', callRoutes);
 app.use('/api/contacts', contactRoutes);
+console.log('🔁 Contacts routes mounted');
 app.use('/api/context', contextRoutes);
 app.use('/api/leads', leadRoutes);
 
