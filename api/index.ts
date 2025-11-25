@@ -35,6 +35,19 @@ app.get('/api/health', (req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Env check (safe): returns whether MONGODB_URI is present without revealing its value
+app.get('/api/env', (_req: Request, res: Response) => {
+  const present = Boolean(process.env.MONGODB_URI || process.env.MONGO_URI);
+  res.json({ MONGODB_URI_PRESENT: present });
+});
+
+// Environment presence check (safe): returns whether MONGODB_URI is present in the runtime env
+// Does NOT return the value of the variable.
+app.get('/api/env', (_req: Request, res: Response) => {
+  const present = Boolean(process.env.MONGODB_URI || process.env.MONGO_URI);
+  res.json({ MONGODB_URI_PRESENT: present });
+});
+
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/agents', agentRoutes);
