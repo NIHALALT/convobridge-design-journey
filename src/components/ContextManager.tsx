@@ -32,15 +32,19 @@ export function ContextManager({ agentId, onContextSaved }: ContextManagerProps)
 
   // Load existing context on mount
   useEffect(() => {
-    loadExistingContext();
+    // Only attempt to load existing context when agentId looks like a MongoDB ObjectId
+    const isValidObjectId = /^[0-9a-fA-F]{24}$/.test(agentId || '');
+    if (isValidObjectId) {
+      loadExistingContext();
+    }
   }, [agentId]);
 
   const loadExistingContext = async () => {
     try {
       const result = await apiClient.getContext(agentId);
-      if (result.context) {
-        setSavedContext(result.context);
-        setGeneratedContext(result.context);
+      if (result.generatedContext) {
+        setSavedContext(result.generatedContext);
+        setGeneratedContext(result.generatedContext);
       }
     } catch (error) {
       // No context exists yet, which is fine

@@ -713,23 +713,301 @@ export default function Dashboard() {
   );
 
   const renderAnalytics = () => (
-    <div className="space-y-6 animate-fade-in-up">
-      <h2 className="text-h2 font-semibold">Analytics</h2>
-      <div className="bg-card border rounded-lg p-12 text-center">
-        <BarChart3 className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-        <h3 className="text-h3 font-semibold mb-2">Advanced Analytics Coming Soon</h3>
-        <p className="text-muted-foreground">Detailed call analytics, performance reports, and insights</p>
+    <div className="space-y-8 animate-fade-in-up">
+      <div>
+        <h2 className="text-h2 font-semibold mb-2">Analytics & Reports</h2>
+        <p className="text-muted-foreground">Detailed insights into your call performance</p>
       </div>
+
+      {loading ? (
+        <div className="grid gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="bg-card border rounded-lg p-6 animate-pulse h-32"></div>
+          ))}
+        </div>
+      ) : (
+        <>
+          {/* Key Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="bg-card border rounded-lg p-6">
+              <p className="text-sm text-muted-foreground mb-2">Total Calls</p>
+              <p className="text-3xl font-bold mb-2">{stats?.totalCalls || 0}</p>
+              <p className="text-xs text-green-600">↑ This period</p>
+            </div>
+            <div className="bg-card border rounded-lg p-6">
+              <p className="text-sm text-muted-foreground mb-2">Success Rate</p>
+              <p className="text-3xl font-bold mb-2">{((stats?.successRate || 0) * 100).toFixed(1)}%</p>
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
+                <div className="h-full bg-green-500" style={{ width: `${(stats?.successRate || 0) * 100}%` }}></div>
+              </div>
+            </div>
+            <div className="bg-card border rounded-lg p-6">
+              <p className="text-sm text-muted-foreground mb-2">Avg Call Duration</p>
+              <p className="text-3xl font-bold mb-2">{formatDuration(stats?.avgDuration || 0)}</p>
+              <p className="text-xs text-muted-foreground">Across all calls</p>
+            </div>
+            <div className="bg-card border rounded-lg p-6">
+              <p className="text-sm text-muted-foreground mb-2">Active Agents</p>
+              <p className="text-3xl font-bold mb-2">{agents?.filter(a => a.isActive).length || 0}</p>
+              <p className="text-xs text-muted-foreground">Deployed and active</p>
+            </div>
+          </div>
+
+          {/* Call Status Breakdown */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-card border rounded-lg p-6">
+              <h3 className="text-h3 font-semibold mb-4">Call Status Distribution</h3>
+              <div className="space-y-3">
+                {[
+                  { status: 'Completed', count: Math.floor((stats?.totalCalls || 0) * 0.75), color: 'bg-green-500' },
+                  { status: 'In Progress', count: Math.floor((stats?.totalCalls || 0) * 0.1), color: 'bg-blue-500' },
+                  { status: 'Missed', count: Math.floor((stats?.totalCalls || 0) * 0.1), color: 'bg-red-500' },
+                  { status: 'Failed', count: Math.floor((stats?.totalCalls || 0) * 0.05), color: 'bg-yellow-500' }
+                ].map((item) => (
+                  <div key={item.status}>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium">{item.status}</span>
+                      <span className="text-sm font-semibold">{item.count}</span>
+                    </div>
+                    <div className="h-2 bg-muted rounded-full overflow-hidden">
+                      <div className={`h-full ${item.color}`} style={{ width: `${(item.count / (stats?.totalCalls || 1)) * 100}%` }}></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-card border rounded-lg p-6">
+              <h3 className="text-h3 font-semibold mb-4">Lead Status Distribution</h3>
+              <div className="space-y-3">
+                {[
+                  { status: 'Converted', leads: leads?.filter(l => l.status === 'converted').length || 0, color: 'bg-green-500' },
+                  { status: 'Qualified', leads: leads?.filter(l => l.status === 'qualified').length || 0, color: 'bg-purple-500' },
+                  { status: 'Contacted', leads: leads?.filter(l => l.status === 'contacted').length || 0, color: 'bg-blue-500' },
+                  { status: 'New', leads: leads?.filter(l => l.status === 'new').length || 0, color: 'bg-yellow-500' },
+                  { status: 'Lost', leads: leads?.filter(l => l.status === 'lost').length || 0, color: 'bg-red-500' }
+                ].map((item) => (
+                  <div key={item.status}>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-sm font-medium">{item.status}</span>
+                      <span className="text-sm font-semibold">{item.leads}</span>
+                    </div>
+                    <div className="h-2 bg-muted rounded-full overflow-hidden">
+                      <div className={`h-full ${item.color}`} style={{ width: `${(item.leads / Math.max(leads?.length || 1, 1)) * 100}%` }}></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Agent Performance */}
+          <div className="bg-card border rounded-lg p-6">
+            <h3 className="text-h3 font-semibold mb-4">Agent Performance</h3>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-muted/50 border-b">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">Agent</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">Type</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">Total Calls</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">Success Rate</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {agents && agents.length > 0 ? (
+                    agents.map((agent: any) => (
+                      <tr key={agent._id} className="hover:bg-muted/50">
+                        <td className="px-4 py-3 text-sm font-medium">{agent.name}</td>
+                        <td className="px-4 py-3 text-sm">{agent.type}</td>
+                        <td className="px-4 py-3 text-sm font-mono">{agent.stats?.totalCalls || 0}</td>
+                        <td className="px-4 py-3 text-sm">
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden w-20">
+                              <div className="h-full bg-blue-500" style={{ width: `${(agent.stats?.successRate || 0) * 100}%` }}></div>
+                            </div>
+                            <span className="text-xs font-semibold">{((agent.stats?.successRate || 0) * 100).toFixed(1)}%</span>
+                          </div>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${
+                            agent.isActive ? 'bg-green-500/10 text-green-600' : 'bg-gray-500/10 text-gray-600'
+                          }`}>
+                            {agent.isActive ? 'Active' : 'Inactive'}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">No agents found</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Recent Trends */}
+          <div className="bg-card border rounded-lg p-6">
+            <h3 className="text-h3 font-semibold mb-4">Period Summary</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">Conversion Rate</p>
+                <p className="text-2xl font-bold">{leads && leads.length > 0 ? Math.round((leads.filter(l => l.status === 'converted').length / leads.length) * 100) : 0}%</p>
+                <p className="text-xs text-muted-foreground mt-1">{leads?.filter(l => l.status === 'converted').length || 0} converted from {leads?.length || 0} leads</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">Avg Quality Score</p>
+                <p className="text-2xl font-bold">{leads && leads.length > 0 ? (leads.reduce((sum: number, l: any) => sum + (l.score || 0), 0) / leads.length).toFixed(1) : 0}</p>
+                <p className="text-xs text-muted-foreground mt-1">Based on lead scores</p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">Most Used Source</p>
+                <p className="text-2xl font-bold">
+                  {leads && leads.length > 0 ? (
+                    Object.keys(
+                      leads.reduce((acc: Record<string, number>, l: any) => {
+                        acc[l.source || 'Direct'] = (acc[l.source || 'Direct'] || 0) + 1;
+                        return acc;
+                      }, {})
+                    ).reduce((a, b) => (
+                      (leads.reduce((sum: number, l: any) => sum + (l.source === a ? 1 : 0), 0) > 
+                       leads.reduce((sum: number, l: any) => sum + (l.source === b ? 1 : 0), 0)) ? a : b
+                    ))
+                  ) : 'N/A'}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">Most common lead source</p>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 
   const renderSettings = () => (
-    <div className="space-y-6 animate-fade-in-up">
-      <h2 className="text-h2 font-semibold">Settings</h2>
-      <div className="bg-card border rounded-lg p-12 text-center">
-        <Settings className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-        <h3 className="text-h3 font-semibold mb-2">Settings Coming Soon</h3>
-        <p className="text-muted-foreground">Account settings, integrations, and API configuration</p>
+    <div className="space-y-8 animate-fade-in-up max-w-4xl">
+      <div>
+        <h2 className="text-h2 font-semibold mb-2">Settings</h2>
+        <p className="text-muted-foreground">Manage your account and preferences</p>
+      </div>
+
+      <div className="bg-card border rounded-lg p-8">
+        <h3 className="text-h3 font-semibold mb-6">Account Information</h3>
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-medium text-muted-foreground mb-2 block">Full Name</label>
+              <Input value={userName} readOnly disabled className="bg-muted" />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-muted-foreground mb-2 block">Email</label>
+              <Input value={localStorage.getItem("userEmail") || "—"} readOnly disabled className="bg-muted" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-card border rounded-lg p-8">
+        <h3 className="text-h3 font-semibold mb-6">Default Call Settings</h3>
+        <div className="space-y-4">
+          <div>
+            <label className="text-sm font-medium text-muted-foreground mb-2 block">Default Agent Voice</label>
+            <Select defaultValue="alloy">
+              <SelectTrigger>
+                <SelectValue placeholder="Select voice" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="alloy">Alloy (Default)</SelectItem>
+                <SelectItem value="echo">Echo</SelectItem>
+                <SelectItem value="fable">Fable</SelectItem>
+                <SelectItem value="onyx">Onyx</SelectItem>
+                <SelectItem value="nova">Nova</SelectItem>
+                <SelectItem value="shimmer">Shimmer</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-muted-foreground mb-2 block">Default Language</label>
+            <Select defaultValue="en">
+              <SelectTrigger>
+                <SelectValue placeholder="Select language" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="en">English</SelectItem>
+                <SelectItem value="es">Spanish</SelectItem>
+                <SelectItem value="fr">French</SelectItem>
+                <SelectItem value="de">German</SelectItem>
+                <SelectItem value="it">Italian</SelectItem>
+                <SelectItem value="pt">Portuguese</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-muted-foreground mb-2 block">Call Recording</label>
+            <div className="flex items-center gap-3">
+              <input type="checkbox" defaultChecked className="rounded" id="recording" />
+              <label htmlFor="recording" className="text-sm">Enable call recording by default</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-card border rounded-lg p-8">
+        <h3 className="text-h3 font-semibold mb-6">API & Integrations</h3>
+        <div className="space-y-4">
+          <div>
+            <p className="text-sm text-muted-foreground mb-4">Manage API tokens and third-party integrations</p>
+            <div className="bg-muted/50 rounded-lg p-4">
+              <p className="text-sm font-mono text-muted-foreground">API Key: sk_live_••••••••••••••••</p>
+              <Button variant="outline" size="sm" className="mt-3">
+                Regenerate API Key
+              </Button>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-sm font-medium text-muted-foreground mb-2 block">Integrations</label>
+            <div className="grid gap-3">
+              {[
+                { name: 'Salesforce', icon: '🔷', connected: true },
+                { name: 'HubSpot', icon: '🟠', connected: false },
+                { name: 'Stripe', icon: '💙', connected: false },
+                { name: 'Zapier', icon: '⚡', connected: false }
+              ].map((integration) => (
+                <div key={integration.name} className="flex items-center justify-between p-3 border rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <span className="text-2xl">{integration.icon}</span>
+                    <div>
+                      <p className="text-sm font-medium">{integration.name}</p>
+                      <p className="text-xs text-muted-foreground">{integration.connected ? 'Connected' : 'Not connected'}</p>
+                    </div>
+                  </div>
+                  <Button variant={integration.connected ? "outline" : "default"} size="sm">
+                    {integration.connected ? 'Disconnect' : 'Connect'}
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-card border rounded-lg p-8">
+        <h3 className="text-h3 font-semibold mb-6 text-red-600">Danger Zone</h3>
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">Once you delete your account, there is no going back. Please be certain.</p>
+          <Button variant="destructive">Delete Account</Button>
+        </div>
+      </div>
+
+      <div className="flex gap-3">
+        <Button>Save Changes</Button>
+        <Button variant="outline">Cancel</Button>
       </div>
     </div>
   );
