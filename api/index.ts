@@ -1,14 +1,15 @@
 import express, { Express, Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { connectDB } from './config/db';
-import { errorHandler } from './middleware/errorHandler';
+import { connectDB } from '../backend/config/db.js';
+import { errorHandler } from '../backend/middleware/errorHandler.js';
 
 // Routes
-import authRoutes from './routes/auth';
-import agentRoutes from './routes/agents';
-import callRoutes from './routes/calls';
-import contactRoutes from './routes/contacts';
+import authRoutes from '../backend/routes/auth.js';
+import agentRoutes from '../backend/routes/agents.js';
+import callRoutes from '../backend/routes/calls.js';
+import contactRoutes from '../backend/routes/contacts.js';
+import contextRoutes from '../backend/routes/context.js';
 
 dotenv.config();
 
@@ -35,6 +36,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/agents', agentRoutes);
 app.use('/api/calls', callRoutes);
 app.use('/api/contacts', contactRoutes);
+app.use('/api/context', contextRoutes);
 
 // 404 handler
 app.use((req: Request, res: Response) => {
