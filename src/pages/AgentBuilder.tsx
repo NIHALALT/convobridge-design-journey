@@ -1,11 +1,13 @@
-import { useState, useMemo } from "react";
-import { ChevronRight, ChevronLeft, Play, Plus, Settings, Code, Phone, CheckCircle2, ArrowRight, Eye, X } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { ChevronRight, ChevronLeft, Play, Plus, Settings, Code, Phone, CheckCircle2, ArrowRight, Eye, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { LiveDemoWidget } from "@/components/LiveDemoWidget";
 import { ContextManager } from "@/components/ContextManager";
+import { apiClient } from "@/lib/apiClient";
+import { useToast } from "@/hooks/use-toast";
 
 interface TestCall {
   id: string;
@@ -17,6 +19,7 @@ interface TestCall {
 }
 
 export default function AgentBuilder() {
+  const { toast } = useToast();
   const [currentStep, setCurrentStep] = useState(1); // Step 1: Template
   
   // Step 1: Template
@@ -40,12 +43,18 @@ export default function AgentBuilder() {
     stripe: false,
     zapier: false
   });
+  const [agentId, setAgentId] = useState<string | null>(null);
+  const [creatingAgent, setCreatingAgent] = useState(false);
   
   // Step 5: Test Call
   const [testScenario, setTestScenario] = useState("Interested Prospect");
   const [testCalls, setTestCalls] = useState<TestCall[]>([]);
   const [showLiveWidget, setShowLiveWidget] = useState(false);
   const [isTestCallActive, setIsTestCallActive] = useState(false);
+  
+  // Step 6: Deploy
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [agentContext, setAgentContext] = useState<string>("");
 
   const steps = [
     { number: 1, label: "Template", id: "template" },
@@ -166,6 +175,58 @@ export default function AgentBuilder() {
     }
   };
 
+  const handleDeployAgent = async () => {
+    if (!agentId) {
+      toast({
+        title: "Error",
+        description: "Agent ID not found. Please try creating the agent again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      setIsDeploying(true);
+      
+      // Update the agent with final configuration
+      await apiClient.updateAgent(agentId, {
+        name: agentName,
+        type: selectedTemplate.toLowerCase().replace(" agent", ""),
+        systemPrompt,
+        voice: selectedVoice,
+        languages,
+        personality: personality < 33 ? "formal" : personality < 67 ? "balanced" : "friendly",
+        generatedContext: agentContext,
+        isDeployed: false, // Save as draft
+        integrations: Object.keys(connectedIntegrations)
+          .filter(k => connectedIntegrations[k as keyof typeof connectedIntegrations])
+          .map(k => ({ name: k, connected: true }))
+      });
+
+      toast({
+        title: "Agent saved as draft",
+        description: `${agentName} has been saved. You can deploy it from the dashboard when ready.`,
+      });
+
+      // Redirect to dashboard or agent list
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 2000);
+    } catch (error: any) {
+      toast({
+        title: "Error deploying agent",
+        description: error.response?.data?.message || "Failed to deploy agent",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeploying(false);
+    }
+  };
+
+  const handleContextSaved = (context: string) => {
+    setAgentContext(context);
+  };
+
   // Get agent configuration summary
   const agentConfig = useMemo(() => ({
     template: selectedTemplate,
@@ -177,6 +238,36 @@ export default function AgentBuilder() {
     files: uploadedFiles,
     integrations: Object.keys(connectedIntegrations).filter(k => connectedIntegrations[k as keyof typeof connectedIntegrations])
   }), [agentName, selectedVoice, languages, personality, systemPrompt, uploadedFiles, connectedIntegrations, selectedTemplate]);
+
+  // Create a draft agent when entering Step 4 if not already created
+  useEffect(() => {
+    const createDraftAgent = async () => {
+      if (currentStep === 4 && !agentId && !creatingAgent) {
+        try {
+          setCreatingAgent(true);
+          const response = await apiClient.createAgent({
+            name: `${agentName} (Draft)`,
+            type: selectedTemplate.toLowerCase().replace(" agent", ""),
+            systemPrompt,
+            voice: selectedVoice,
+            languages,
+            personality: personality < 33 ? "formal" : personality < 67 ? "balanced" : "friendly",
+            isDeployed: false
+          });
+          setAgentId(response.agent._id);
+        } catch (error: any) {
+          toast({
+            title: "Error creating draft agent",
+            description: error.response?.data?.message || "Failed to create draft agent",
+            variant: "destructive",
+          });
+        } finally {
+          setCreatingAgent(false);
+        }
+      }
+    };
+    createDraftAgent();
+  }, [currentStep, agentId, creatingAgent, agentName, selectedTemplate, systemPrompt, selectedVoice, languages, personality, toast]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -419,7 +510,18 @@ export default function AgentBuilder() {
                   <p className="text-muted-foreground">Provide files, data, and integrations to enhance your agent's knowledge.</p>
                 </div>
 
-                <ContextManager agentId="demo-agent-123" />
+                {creatingAgent ? (
+                  <div className="text-center py-12">
+                    <div className="animate-spin inline-block h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div>
+                    <p className="mt-4 text-muted-foreground">Preparing agent for context...</p>
+                  </div>
+                ) : agentId ? (
+                  <ContextManager agentId={agentId} onContextSaved={handleContextSaved} />
+                ) : (
+                  <div className="text-center py-12 border rounded-lg bg-muted/50">
+                    <p className="text-muted-foreground">Error: Could not create draft agent. Please try again.</p>
+                  </div>
+                )}
 
                 {/* API Integrations */}
                 <div className="bg-card border rounded-lg p-6 space-y-4">
@@ -714,9 +816,23 @@ export default function AgentBuilder() {
                     </div>
 
                     {/* Launch Button */}
-                    <Button size="lg" className="w-full gap-2 bg-success hover:bg-success/90">
-                      <CheckCircle2 className="h-5 w-5" />
-                      Deploy Agent Now
+                    <Button 
+                      size="lg" 
+                      className="w-full gap-2 bg-success hover:bg-success/90"
+                      onClick={handleDeployAgent}
+                      disabled={isDeploying}
+                    >
+                      {isDeploying ? (
+                        <>
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                          Saving Agent...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 className="h-5 w-5" />
+                          Deploy Agent Now
+                        </>
+                      )}
                     </Button>
                   </div>
                 </div>

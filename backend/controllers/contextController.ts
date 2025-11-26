@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { GoogleGenAI } from '@google/genai';
 import * as pdfParse from 'pdf-parse';
+import mongoose from 'mongoose';
 import { AppError } from '../middleware/errorHandler.js';
 import { connectDB } from '../config/db.js';
 import { Agent } from '../models/Agent.js';
@@ -19,6 +20,11 @@ export const processFileForContext = async (req: Request, res: Response, next: N
     const { agentId } = req.body;
     if (!agentId) {
       throw new AppError(400, 'Agent ID is required');
+    }
+
+    // Verify agentId is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(agentId)) {
+      throw new AppError(400, 'Invalid Agent ID format');
     }
 
     // Verify agent exists and belongs to user
@@ -95,6 +101,11 @@ export const saveContext = async (req: Request, res: Response, next: NextFunctio
       throw new AppError(400, 'Context is required and must be a string');
     }
 
+    // Verify agentId is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(agentId)) {
+      throw new AppError(400, 'Invalid Agent ID format');
+    }
+
     const agent = await Agent.findByIdAndUpdate(
       agentId,
       { generatedContext: context },
@@ -125,6 +136,11 @@ export const getContext = async (req: Request, res: Response, next: NextFunction
       throw new AppError(400, 'Agent ID is required');
     }
 
+    // Verify agentId is a valid MongoDB ObjectId
+    if (!mongoose.Types.ObjectId.isValid(agentId)) {
+      throw new AppError(400, 'Invalid Agent ID format');
+    }
+
     const agent = await Agent.findById(agentId);
 
     if (!agent) {
@@ -152,6 +168,11 @@ export const crawlWebsiteForContext = async (req: Request, res: Response, next: 
 
     if (!agentId) {
       throw new AppError(400, 'Agent ID is required');
+    }
+
+    // Verify agentId is a valid MongoDB ObjectId
+    if (!agentId.match(/^[0-9a-fA-F]{24}$/)) {
+      throw new AppError(400, 'Invalid Agent ID format');
     }
 
     // Verify agent exists

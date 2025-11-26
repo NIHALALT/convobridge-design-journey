@@ -91,6 +91,27 @@ class APIClient {
     return response.data;
   }
 
+  // Phone Numbers (admin)
+  async getNumbers() {
+    const response = await this.client.get('/admin/numbers');
+    return response.data;
+  }
+
+  async createNumber(numberData: any) {
+    const response = await this.client.post('/admin/numbers', numberData);
+    return response.data;
+  }
+
+  async updateNumber(id: string, data: any) {
+    const response = await this.client.put(`/admin/numbers/${id}`, data);
+    return response.data;
+  }
+
+  async deleteNumber(id: string) {
+    const response = await this.client.delete(`/admin/numbers/${id}`);
+    return response.data;
+  }
+
   // Calls
   async createCall(callData: any) {
     const response = await this.client.post('/calls', callData);
