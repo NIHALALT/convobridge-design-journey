@@ -1,12 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
 import { GoogleGenAI } from '@google/genai';
-import * as pdfParse from 'pdf-parse';
 import mongoose from 'mongoose';
 import { AppError } from '../middleware/errorHandler.js';
 import { connectDB } from '../config/db.js';
 import { Agent } from '../models/Agent.js';
 
-const ai = new GoogleGenAI({ apiKey: process.env.VITE_GEMINI_API_KEY || '' });
+// Use GEMINI_API_KEY for backend (not VITE_ prefixed)
+const getGeminiClient = () => {
+  const apiKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error('GEMINI_API_KEY is not configured');
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 export const processFileForContext = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -52,6 +58,8 @@ export const processFileForContext = async (req: Request, res: Response, next: N
     }
 
     // Use Gemini 2.5 Flash to analyze file content
+    const ai = getGeminiClient();
+    
     const contents: any[] = [
       { text: 'You are an AI assistant helping to prepare a knowledge base for an AI agent. Please read the following document and extract the most important and useful information. Summarize key points, facts, and insights that an AI agent should know when helping users. Keep the summary concise but comprehensive. Provide a clear, structured summary.' }
     ];
@@ -189,7 +197,8 @@ export const crawlWebsiteForContext = async (req: Request, res: Response, next: 
     }
 
     // Use Gemini 2.5 Flash with native URL context support
-    // This is much more efficient than manual scraping!
+    const ai = getGeminiClient();
+    
     const response = await ai.models.generateContent({
       model: 'gemini-2.5-flash',
       contents: [
@@ -203,7 +212,7 @@ Website URL: ${url}`
         }
       ],
       config: {
-        tools: [{urlContext: {} as any}]
+        tools: [{ urlContext: {} }]
       }
     } as any);
 
