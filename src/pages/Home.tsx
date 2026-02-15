@@ -1,6 +1,9 @@
 import { ArrowRight, Phone, BarChart3, Calendar, Globe2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LiveDemoWidget } from "@/components/LiveDemoWidget";
+import { AuroraBackground } from "@/components/AuroraBackground";
+import { GridPattern } from "@/components/GridPattern";
+import { OrbitalRings } from "@/components/OrbitalRings";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 
@@ -10,8 +13,12 @@ export default function Home() {
       <NavBar />
 
       {/* Hero */}
-      <section className="pt-28 pb-20 md:pt-36 md:pb-28">
-        <div className="max-w-6xl mx-auto px-6">
+      <section className="relative pt-28 pb-20 md:pt-36 md:pb-28 overflow-hidden">
+        <AuroraBackground />
+        <GridPattern className="opacity-40" />
+        <OrbitalRings className="top-1/2 right-0 -translate-y-1/2 translate-x-1/4 hidden lg:block" size={600} />
+
+        <div className="relative z-10 max-w-6xl mx-auto px-6">
           <div className="grid lg:grid-cols-[1.3fr,1fr] gap-16 items-start">
             <div className="space-y-8">
               <h1 className="text-display">
@@ -47,9 +54,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How It Works — Editorial stacked layout */}
-      <section className="section-spacing border-t">
-        <div className="max-w-6xl mx-auto px-6">
+      {/* How It Works */}
+      <section className="relative section-spacing border-t overflow-hidden">
+        <GridPattern className="opacity-20" />
+        <div className="relative z-10 max-w-6xl mx-auto px-6">
           <div className="max-w-2xl mb-20">
             <p className="text-caption text-primary mb-3 uppercase tracking-wider">How it works</p>
             <h2 className="text-h2">Three steps to<br />24/7 coverage.</h2>
@@ -77,7 +85,7 @@ export default function Home() {
               },
             ].map((item, i) => (
               <div key={item.step} className={`grid md:grid-cols-[120px,1fr] gap-8 items-start ${i !== 2 ? 'pb-20 border-b' : ''}`}>
-                <div className="text-6xl font-extrabold text-border/60" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                <div className="text-6xl font-extrabold text-border/60 font-display">
                   {item.step}
                 </div>
                 <div className="max-w-xl">
@@ -104,7 +112,7 @@ export default function Home() {
               { value: "24/7", label: "Availability" },
             ].map((stat) => (
               <div key={stat.label}>
-                <div className="text-3xl md:text-4xl font-extrabold mb-1" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+                <div className="text-3xl md:text-4xl font-extrabold mb-1 font-display">
                   {stat.value}
                 </div>
                 <div className="text-sm text-muted-foreground">{stat.label}</div>
