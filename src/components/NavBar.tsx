@@ -7,25 +7,29 @@ export default function NavBar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 w-full z-40 glass">
+    <nav className="fixed top-0 w-full z-40 glass-nav">
       <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-        <NavLink to="/" className="font-bold text-lg hover:opacity-80 transition-opacity" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-          ConvoBridge
+        <NavLink to="/" className="font-bold text-lg hover:opacity-80 transition-opacity font-display">
+          <span className="text-foreground">Convo</span>
+          <span className="holo-text">Bridge</span>
         </NavLink>
 
         <div className="hidden md:flex items-center gap-8">
-          <NavLink to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors" activeClassName="text-foreground">
-            Home
-          </NavLink>
-          <NavLink to="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors" activeClassName="text-foreground">
-            Pricing
-          </NavLink>
-          <NavLink to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors" activeClassName="text-foreground">
-            About
-          </NavLink>
-          <NavLink to="/contact-us" className="text-sm text-muted-foreground hover:text-foreground transition-colors" activeClassName="text-foreground">
-            Contact
-          </NavLink>
+          {[
+            { to: "/", label: "Home" },
+            { to: "/pricing", label: "Pricing" },
+            { to: "/about", label: "About" },
+            { to: "/contact-us", label: "Contact" },
+          ].map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+              activeClassName="text-foreground"
+            >
+              {link.label}
+            </NavLink>
+          ))}
         </div>
 
         <div className="hidden md:flex items-center gap-3">
@@ -33,7 +37,7 @@ export default function NavBar() {
             <span className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">Login</span>
           </NavLink>
           <NavLink to="/dashboard">
-            <Button size="sm" className="bg-primary text-primary-foreground hover:opacity-90 rounded-lg px-5">
+            <Button size="sm" className="rounded-xl px-5 bg-primary text-primary-foreground hover:brightness-110 shadow-[0_0_20px_-5px_hsla(36,100%,50%,0.3)]">
               Get Started
             </Button>
           </NavLink>
@@ -49,7 +53,7 @@ export default function NavBar() {
       </div>
 
       {open && (
-        <div className="md:hidden bg-background border-t">
+        <div className="md:hidden glass-card border-t border-white/[0.06]">
           <div className="px-6 py-4 space-y-1">
             {[
               { to: '/', label: 'Home' },
@@ -66,7 +70,7 @@ export default function NavBar() {
                 {link.label}
               </NavLink>
             ))}
-            <div className="pt-4 mt-2 border-t flex flex-col gap-2">
+            <div className="pt-4 mt-2 border-t border-white/[0.06] flex flex-col gap-2">
               <NavLink to="/login" className="w-full" onClick={() => setOpen(false)}>
                 <Button variant="ghost" size="sm" className="w-full justify-start">Login</Button>
               </NavLink>

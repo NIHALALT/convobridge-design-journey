@@ -1,15 +1,13 @@
 import { cn } from "@/lib/utils";
 
 /**
- * OrbitalRings — Concentric rotating rings with subtle dots.
- * Creates a sense of intelligence and precision. 
- * Perfect for hero sections or behind product demos.
+ * OrbitalRings — 3D holographic concentric rings with iridescent dots.
  */
 export function OrbitalRings({ className, size = 500 }: { className?: string; size?: number }) {
   const rings = [
-    { r: size * 0.3, duration: 30, direction: 1, dots: 3 },
-    { r: size * 0.42, duration: 45, direction: -1, dots: 5 },
-    { r: size * 0.55, duration: 60, direction: 1, dots: 2 },
+    { r: size * 0.3, duration: 30, direction: 1, dots: 3, color: "hsl(280 80% 65%)" },
+    { r: size * 0.42, duration: 45, direction: -1, dots: 5, color: "hsl(200 90% 60%)" },
+    { r: size * 0.55, duration: 60, direction: 1, dots: 2, color: "hsl(36 100% 55%)" },
   ];
 
   return (
@@ -18,22 +16,26 @@ export function OrbitalRings({ className, size = 500 }: { className?: string; si
         width={size}
         height={size}
         viewBox={`0 0 ${size} ${size}`}
-        className="opacity-[0.15] dark:opacity-[0.2]"
+        className="opacity-25"
       >
+        <defs>
+          <linearGradient id="ring-holo" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="hsl(280 80% 65%)" stopOpacity="0.4" />
+            <stop offset="50%" stopColor="hsl(200 90% 60%)" stopOpacity="0.2" />
+            <stop offset="100%" stopColor="hsl(36 100% 55%)" stopOpacity="0.4" />
+          </linearGradient>
+        </defs>
         {rings.map((ring, i) => (
           <g key={i}>
-            {/* Ring path */}
             <circle
               cx={size / 2}
               cy={size / 2}
               r={ring.r}
               fill="none"
-              stroke="currentColor"
-              strokeWidth="0.5"
-              className="text-foreground/30"
-              strokeDasharray="4 8"
+              stroke="url(#ring-holo)"
+              strokeWidth="0.8"
+              strokeDasharray="6 12"
             />
-            {/* Orbiting dots */}
             <g
               style={{
                 transformOrigin: `${size / 2}px ${size / 2}px`,
@@ -49,8 +51,9 @@ export function OrbitalRings({ className, size = 500 }: { className?: string; si
                     key={d}
                     cx={x}
                     cy={y}
-                    r={2}
-                    className="fill-primary/60"
+                    r={2.5}
+                    fill={ring.color}
+                    opacity={0.8}
                   />
                 );
               })}

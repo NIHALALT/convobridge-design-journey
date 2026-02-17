@@ -1,9 +1,10 @@
-import { ArrowRight, Phone, BarChart3, Calendar, Globe2 } from "lucide-react";
+import { ArrowRight, Phone, BarChart3, Calendar, Globe2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LiveDemoWidget } from "@/components/LiveDemoWidget";
 import { AuroraBackground } from "@/components/AuroraBackground";
 import { GridPattern } from "@/components/GridPattern";
 import { OrbitalRings } from "@/components/OrbitalRings";
+import { HolographicOrb } from "@/components/HolographicOrb";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 
@@ -18,13 +19,25 @@ export default function Home() {
         <GridPattern className="opacity-40" />
         <OrbitalRings className="top-1/2 right-0 -translate-y-1/2 translate-x-1/4 hidden lg:block" size={600} />
 
+        {/* 3D Holographic Orb — hero accent */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hidden lg:block opacity-20 pointer-events-none">
+          <HolographicOrb size={800} />
+        </div>
+
         <div className="relative z-10 max-w-6xl mx-auto px-6">
           <div className="grid lg:grid-cols-[1.3fr,1fr] gap-16 items-start">
             <div className="space-y-8">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium glass-card"
+                style={{ border: "1px solid hsla(0 0% 100% / 0.1)" }}
+              >
+                <Sparkles className="h-3.5 w-3.5 text-primary" />
+                <span className="text-muted-foreground">Powered by advanced AI</span>
+              </div>
+
               <h1 className="text-display">
                 Your AI agent
                 <br />
-                <span className="gradient-text">answers every call.</span>
+                <span className="holo-text">answers every call.</span>
               </h1>
 
               <p className="text-body-large text-muted-foreground max-w-lg">
@@ -33,11 +46,11 @@ export default function Home() {
               </p>
 
               <div className="flex flex-wrap gap-3">
-                <Button size="lg" className="rounded-lg text-base px-6">
+                <Button size="lg" className="rounded-xl text-base px-6 bg-primary text-primary-foreground hover:brightness-110 shadow-[0_0_30px_-5px_hsla(36,100%,50%,0.3)]">
                   Start Free Trial
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <Button size="lg" variant="outline" className="rounded-lg text-base px-6">
+                <Button size="lg" variant="outline" className="rounded-xl text-base px-6 border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 text-foreground">
                   Watch Demo
                 </Button>
               </div>
@@ -55,15 +68,15 @@ export default function Home() {
       </section>
 
       {/* How It Works */}
-      <section className="relative section-spacing border-t overflow-hidden">
+      <section className="relative section-spacing border-t border-white/[0.06] overflow-hidden">
         <GridPattern className="opacity-20" />
         <div className="relative z-10 max-w-6xl mx-auto px-6">
           <div className="max-w-2xl mb-20">
             <p className="text-caption text-primary mb-3 uppercase tracking-wider">How it works</p>
-            <h2 className="text-h2">Three steps to<br />24/7 coverage.</h2>
+            <h2 className="text-h2">Three steps to<br /><span className="holo-text">24/7 coverage.</span></h2>
           </div>
 
-          <div className="space-y-20">
+          <div className="space-y-8">
             {[
               {
                 step: "01",
@@ -84,16 +97,23 @@ export default function Home() {
                 icon: BarChart3,
               },
             ].map((item, i) => (
-              <div key={item.step} className={`grid md:grid-cols-[120px,1fr] gap-8 items-start ${i !== 2 ? 'pb-20 border-b' : ''}`}>
-                <div className="text-6xl font-extrabold text-border/60 font-display">
-                  {item.step}
-                </div>
-                <div className="max-w-xl">
-                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                    <item.icon className="h-5 w-5 text-primary" />
+              <div key={item.step} className="glass-card-hover rounded-2xl p-8">
+                <div className="grid md:grid-cols-[80px,1fr] gap-6 items-start">
+                  <div className="text-4xl font-extrabold font-display holo-text">
+                    {item.step}
                   </div>
-                  <h3 className="text-h3 mb-3">{item.title}</h3>
-                  <p className="text-body text-muted-foreground">{item.description}</p>
+                  <div className="max-w-xl">
+                    <div className="h-10 w-10 rounded-xl flex items-center justify-center mb-4"
+                      style={{
+                        background: "hsla(36 100% 55% / 0.1)",
+                        border: "1px solid hsla(36 100% 55% / 0.15)",
+                      }}
+                    >
+                      <item.icon className="h-5 w-5 text-primary" />
+                    </div>
+                    <h3 className="text-h3 mb-3">{item.title}</h3>
+                    <p className="text-body text-muted-foreground">{item.description}</p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -102,7 +122,7 @@ export default function Home() {
       </section>
 
       {/* Metrics band */}
-      <section className="border-t border-b bg-card">
+      <section className="border-t border-b border-white/[0.06]">
         <div className="max-w-6xl mx-auto px-6 py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
@@ -111,8 +131,8 @@ export default function Home() {
               { value: "99.9%", label: "Uptime" },
               { value: "24/7", label: "Availability" },
             ].map((stat) => (
-              <div key={stat.label}>
-                <div className="text-3xl md:text-4xl font-extrabold mb-1 font-display">
+              <div key={stat.label} className="glass-card rounded-2xl p-6">
+                <div className="text-3xl md:text-4xl font-extrabold mb-1 font-display holo-text">
                   {stat.value}
                 </div>
                 <div className="text-sm text-muted-foreground">{stat.label}</div>
@@ -127,29 +147,32 @@ export default function Home() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="max-w-2xl mb-16">
             <p className="text-caption text-primary mb-3 uppercase tracking-wider">Use Cases</p>
-            <h2 className="text-h2">Built for teams<br />that talk to customers.</h2>
+            <h2 className="text-h2">Built for teams<br /><span className="holo-text">that talk to customers.</span></h2>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-6 perspective-deep">
             {[
               {
                 title: "Sales",
                 description: "Qualify inbound leads instantly. Your AI agent asks the right questions and routes hot prospects to your team.",
                 icon: BarChart3,
+                gradient: "from-[hsla(280,80%,65%,0.1)] to-transparent",
               },
               {
                 title: "Support",
                 description: "Handle common inquiries, collect information, and escalate complex issues to human agents seamlessly.",
                 icon: Phone,
+                gradient: "from-[hsla(200,90%,60%,0.1)] to-transparent",
               },
               {
                 title: "Scheduling",
                 description: "Book, reschedule, and confirm appointments automatically. Integrates with your existing calendar.",
                 icon: Calendar,
+                gradient: "from-[hsla(36,100%,55%,0.1)] to-transparent",
               },
             ].map((item) => (
-              <div key={item.title} className="stripe-card space-y-4">
-                <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+              <div key={item.title} className={`glass-card-hover rounded-2xl p-8 space-y-4 hover-lift-3d holo-border bg-gradient-to-br ${item.gradient}`}>
+                <div className="h-12 w-12 rounded-xl flex items-center justify-center glass-card">
                   <item.icon className="h-5 w-5 text-primary" />
                 </div>
                 <h3 className="text-h4">{item.title}</h3>
@@ -161,16 +184,19 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section className="relative grain bg-foreground text-background">
-        <div className="max-w-4xl mx-auto px-6 py-24 text-center relative z-10">
-          <h2 className="text-h2 mb-6">Ready to never miss another call?</h2>
-          <p className="text-body-large opacity-70 mb-10 max-w-lg mx-auto">
-            Join hundreds of businesses using ConvoBridge to scale customer communication.
-          </p>
-          <Button size="lg" className="rounded-lg text-base px-8 bg-primary text-primary-foreground">
-            Start Free Trial
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+      <section className="relative grain overflow-hidden">
+        <AuroraBackground />
+        <div className="relative z-10 max-w-4xl mx-auto px-6 py-24 text-center">
+          <div className="glass-card rounded-3xl p-12 md:p-16 holo-border glass-shimmer">
+            <h2 className="text-h2 mb-6">Ready to never miss <span className="holo-text">another call?</span></h2>
+            <p className="text-body-large text-muted-foreground mb-10 max-w-lg mx-auto">
+              Join hundreds of businesses using ConvoBridge to scale customer communication.
+            </p>
+            <Button size="lg" className="rounded-xl text-base px-8 bg-primary text-primary-foreground hover:brightness-110 shadow-[0_0_30px_-5px_hsla(36,100%,50%,0.3)]">
+              Start Free Trial
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </section>
 
