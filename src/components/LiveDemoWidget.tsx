@@ -19,26 +19,27 @@ type WidgetProps = {
   onCallEnd?: (duration: number, transcript: string) => void;
 };
 
-function WaveformBars({ active, count = 5 }: { active: boolean; count?: number }) {
+function WaveformBars({ active, count = 7 }: { active: boolean; count?: number }) {
   return (
-    <div className="flex items-center justify-center gap-[3px] h-10">
+    <div className="flex items-center justify-center gap-[3px] h-12">
       {Array.from({ length: count }).map((_, i) => (
         <div
           key={i}
-          className={cn(
-            "w-[3px] rounded-full transition-all duration-300",
-            active ? "bg-primary" : "bg-muted-foreground/20"
-          )}
-          style={active ? {
-            height: `${14 + Math.random() * 26}px`,
-            animation: `waveform-bar 1.2s ease-in-out ${i * 0.15}s infinite alternate`,
-          } : { height: "6px" }}
+          className="rounded-full transition-all duration-300"
+          style={{
+            width: "3px",
+            background: active
+              ? `linear-gradient(180deg, hsl(200 90% 60%), hsl(36 100% 55%))`
+              : "hsla(0 0% 100% / 0.1)",
+            height: active ? `${14 + Math.random() * 26}px` : "6px",
+            animation: active ? `waveform-bar 1.2s ease-in-out ${i * 0.12}s infinite alternate` : "none",
+          }}
         />
       ))}
       <style>{`
         @keyframes waveform-bar {
           0% { height: 8px; }
-          100% { height: 32px; }
+          100% { height: 36px; }
         }
       `}</style>
     </div>
@@ -88,11 +89,11 @@ export function LiveDemoWidget({ variant = "floating", agentConfig, testScenario
 
   if (variant === "hero") {
     return (
-      <div className="relative w-full max-w-md overflow-hidden rounded-2xl border border-border bg-card shadow-2xl">
+      <div className="relative w-full max-w-md glass-card rounded-3xl overflow-hidden holo-border glass-shimmer">
         {/* Top bar */}
-        <div className="flex items-center justify-between px-5 py-3 border-b border-border">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/[0.06]">
           <div className="flex items-center gap-3">
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center backdrop-blur-sm border border-white/[0.06]">
               <Phone className="h-4 w-4 text-primary" />
             </div>
             <div>
@@ -104,20 +105,21 @@ export function LiveDemoWidget({ variant = "floating", agentConfig, testScenario
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
             {isConnected && callStartTime && <CallTimer startTime={callStartTime} />}
             <div className={cn(
               "h-2.5 w-2.5 rounded-full",
-              isConnected ? "bg-green-500 animate-pulse" :
-              isConnecting ? "bg-amber-400 animate-pulse" : "bg-muted-foreground/30"
+              isConnected ? "bg-emerald-400 shadow-[0_0_8px_hsla(160,80%,50%,0.5)] animate-pulse" :
+              isConnecting ? "bg-amber-400 shadow-[0_0_8px_hsla(36,100%,50%,0.4)] animate-pulse" :
+              "bg-white/20"
             )} />
           </div>
         </div>
 
-        {/* Main content area */}
+        {/* Main content */}
         <div className="p-6">
           {error && (
-            <div className="mb-4 flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
+            <div className="mb-4 flex items-center gap-2 rounded-xl border border-destructive/20 bg-destructive/5 p-3 text-sm text-destructive backdrop-blur-sm">
               <AlertCircle className="h-4 w-4 flex-shrink-0" />
               <span>{error}</span>
             </div>
@@ -125,13 +127,20 @@ export function LiveDemoWidget({ variant = "floating", agentConfig, testScenario
 
           {isIdle && (
             <div className="space-y-6 animate-fade-in">
-              {/* Visual waveform preview */}
               <div className="flex flex-col items-center py-8 space-y-4">
                 <div className="relative">
-                  <div className="h-20 w-20 rounded-full bg-primary/5 flex items-center justify-center">
-                    <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Mic className="h-6 w-6 text-primary/60" />
-                    </div>
+                  {/* Holographic glow ring */}
+                  <div className="absolute inset-0 rounded-full blur-xl opacity-30"
+                    style={{ background: "conic-gradient(from 0deg, hsl(280 80% 65%), hsl(200 90% 60%), hsl(36 100% 55%), hsl(330 80% 60%), hsl(280 80% 65%))" }}
+                  />
+                  <div className="relative h-20 w-20 rounded-full flex items-center justify-center"
+                    style={{
+                      background: "hsla(240 8% 12% / 0.8)",
+                      border: "1px solid hsla(0 0% 100% / 0.1)",
+                      boxShadow: "inset 0 1px 0 hsla(0 0% 100% / 0.05)",
+                    }}
+                  >
+                    <Mic className="h-7 w-7 text-white/60" />
                   </div>
                 </div>
                 <div className="text-center space-y-1">
@@ -139,7 +148,7 @@ export function LiveDemoWidget({ variant = "floating", agentConfig, testScenario
                   <p className="text-xs text-muted-foreground">Talk to our AI agent in real-time</p>
                 </div>
               </div>
-              <Button onClick={handleCall} size="lg" className="w-full rounded-xl">
+              <Button onClick={handleCall} size="lg" className="w-full rounded-xl bg-primary text-primary-foreground hover:brightness-110 shadow-[0_0_30px_-5px_hsla(36,100%,50%,0.3)]">
                 <Phone className="mr-2 h-4 w-4" />
                 Start Live Call
               </Button>
@@ -149,13 +158,19 @@ export function LiveDemoWidget({ variant = "floating", agentConfig, testScenario
           {isConnecting && (
             <div className="flex flex-col items-center py-10 space-y-5 animate-fade-in">
               <div className="relative">
-                <div className="h-16 w-16 rounded-full border-2 border-primary/20 flex items-center justify-center">
+                <div className="h-16 w-16 rounded-full flex items-center justify-center"
+                  style={{
+                    background: "hsla(240 8% 12% / 0.6)",
+                    border: "1px solid hsla(36 100% 55% / 0.3)",
+                  }}
+                >
                   <Loader2 className="h-7 w-7 text-primary animate-spin" />
                 </div>
-                <div className="absolute inset-0 rounded-full border-2 border-primary/10 animate-ping" />
+                <div className="absolute inset-0 rounded-full animate-ping opacity-20"
+                  style={{ border: "2px solid hsl(36 100% 55%)" }} />
               </div>
               <p className="text-sm text-muted-foreground">Establishing connection...</p>
-              <Button onClick={handleEnd} variant="outline" size="sm" className="rounded-xl">
+              <Button onClick={handleEnd} variant="outline" size="sm" className="rounded-xl border-white/10 bg-white/5">
                 Cancel
               </Button>
             </div>
@@ -163,29 +178,25 @@ export function LiveDemoWidget({ variant = "floating", agentConfig, testScenario
 
           {isConnected && (
             <div className="space-y-5 animate-fade-in">
-              {/* Waveform visualizer */}
               <div className="flex flex-col items-center py-6 space-y-3">
-                <WaveformBars active={true} count={7} />
+                <WaveformBars active={true} count={9} />
                 <p className="text-xs text-muted-foreground">Listening...</p>
               </div>
 
-              {/* Volume control */}
               <div className="flex items-center gap-3 px-1">
                 <Volume2 className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                 <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.05"
-                  value={volume}
+                  type="range" min="0" max="1" step="0.05" value={volume}
                   onChange={(e) => setVolume(Number(e.target.value))}
-                  className="flex-1 h-1.5 rounded-full appearance-none bg-border cursor-pointer accent-primary"
+                  className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer accent-primary"
+                  style={{ background: "hsla(0 0% 100% / 0.1)" }}
                 />
               </div>
 
-              {/* Agent info */}
               {agentConfig && (
-                <div className="rounded-lg bg-muted/50 p-3 text-xs text-muted-foreground space-y-1">
+                <div className="rounded-xl p-3 text-xs text-muted-foreground space-y-1"
+                  style={{ background: "hsla(0 0% 100% / 0.03)", border: "1px solid hsla(0 0% 100% / 0.05)" }}
+                >
                   <p><span className="font-medium text-foreground">Agent:</span> {agentConfig.name}</p>
                   <p><span className="font-medium text-foreground">Voice:</span> {agentConfig.voice}</p>
                 </div>
@@ -205,13 +216,13 @@ export function LiveDemoWidget({ variant = "floating", agentConfig, testScenario
   // Floating Variant
   return (
     <div className="fixed bottom-6 right-6 z-50">
-      <div className="w-80 rounded-2xl border border-border bg-card shadow-2xl overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+      <div className="w-80 glass-card rounded-2xl overflow-hidden holo-border">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06]">
           <div className="flex items-center gap-2">
             <div className={cn(
               "h-2 w-2 rounded-full",
-              isConnected ? "bg-green-500 animate-pulse" :
-              isConnecting ? "bg-amber-400 animate-pulse" : "bg-muted-foreground/30"
+              isConnected ? "bg-emerald-400 shadow-[0_0_6px_hsla(160,80%,50%,0.5)] animate-pulse" :
+              isConnecting ? "bg-amber-400 animate-pulse" : "bg-white/20"
             )} />
             <span className="text-sm font-semibold text-foreground">ConvoBridge</span>
           </div>
@@ -224,21 +235,18 @@ export function LiveDemoWidget({ variant = "floating", agentConfig, testScenario
 
         <div className="p-4">
           {error && <p className="text-xs text-destructive mb-2">{error}</p>}
-
           {isIdle && (
             <Button onClick={handleCall} className="w-full rounded-xl" size="sm">
               <Phone className="mr-2 h-3.5 w-3.5" />
               Connect
             </Button>
           )}
-
           {isConnecting && (
             <div className="flex flex-col items-center py-4 space-y-2">
               <Loader2 className="h-6 w-6 text-primary animate-spin" />
               <p className="text-xs text-muted-foreground">Connecting...</p>
             </div>
           )}
-
           {isConnected && (
             <div className="space-y-3">
               <div className="flex items-center justify-between px-1">
@@ -247,10 +255,10 @@ export function LiveDemoWidget({ variant = "floating", agentConfig, testScenario
               </div>
               <div className="flex items-center gap-2 px-1">
                 <Volume2 className="h-3 w-3 text-muted-foreground flex-shrink-0" />
-                <input
-                  type="range" min="0" max="1" step="0.05" value={volume}
+                <input type="range" min="0" max="1" step="0.05" value={volume}
                   onChange={(e) => setVolume(Number(e.target.value))}
-                  className="flex-1 h-1 rounded-full appearance-none bg-border cursor-pointer accent-primary"
+                  className="flex-1 h-1 rounded-full appearance-none cursor-pointer accent-primary"
+                  style={{ background: "hsla(0 0% 100% / 0.1)" }}
                 />
               </div>
             </div>
