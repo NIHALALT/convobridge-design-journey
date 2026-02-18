@@ -28,7 +28,7 @@ export default function Home() {
           <div className="grid lg:grid-cols-[1.3fr,1fr] gap-16 items-start">
             <div className="space-y-8">
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium glass-card"
-                style={{ border: "1px solid hsla(0 0% 100% / 0.1)" }}
+                style={{ border: "1px solid hsla(217 91% 50% / 0.15)" }}
               >
                 <Sparkles className="h-3.5 w-3.5 text-primary" />
                 <span className="text-muted-foreground">Powered by advanced AI</span>
@@ -46,11 +46,11 @@ export default function Home() {
               </p>
 
               <div className="flex flex-wrap gap-3">
-                <Button size="lg" className="rounded-xl text-base px-6 bg-primary text-primary-foreground hover:brightness-110 shadow-[0_0_30px_-5px_hsla(36,100%,50%,0.3)]">
+                <Button size="lg" className="rounded-xl text-base px-6 bg-primary text-primary-foreground hover:brightness-110 shadow-[0_0_30px_-5px_hsla(217,91%,50%,0.3)]">
                   Start Free Trial
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <Button size="lg" variant="outline" className="rounded-xl text-base px-6 border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 text-foreground">
+                <Button size="lg" variant="outline" className="rounded-xl text-base px-6 border-primary/20 bg-primary/5 hover:bg-primary/10 hover:border-primary/30 text-foreground">
                   Watch Demo
                 </Button>
               </div>
@@ -68,7 +68,7 @@ export default function Home() {
       </section>
 
       {/* How It Works */}
-      <section className="relative section-spacing border-t border-white/[0.06] overflow-hidden">
+      <section className="relative section-spacing border-t border-border overflow-hidden">
         <GridPattern className="opacity-20" />
         <div className="relative z-10 max-w-6xl mx-auto px-6">
           <div className="max-w-2xl mb-20">
@@ -105,8 +105,8 @@ export default function Home() {
                   <div className="max-w-xl">
                     <div className="h-10 w-10 rounded-xl flex items-center justify-center mb-4"
                       style={{
-                        background: "hsla(36 100% 55% / 0.1)",
-                        border: "1px solid hsla(36 100% 55% / 0.15)",
+                        background: "hsla(217 91% 50% / 0.08)",
+                        border: "1px solid hsla(217 91% 50% / 0.12)",
                       }}
                     >
                       <item.icon className="h-5 w-5 text-primary" />
@@ -122,7 +122,7 @@ export default function Home() {
       </section>
 
       {/* Metrics band */}
-      <section className="border-t border-b border-white/[0.06]">
+      <section className="border-t border-b border-border">
         <div className="max-w-6xl mx-auto px-6 py-16">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             {[
@@ -156,19 +156,19 @@ export default function Home() {
                 title: "Sales",
                 description: "Qualify inbound leads instantly. Your AI agent asks the right questions and routes hot prospects to your team.",
                 icon: BarChart3,
-                gradient: "from-[hsla(280,80%,65%,0.1)] to-transparent",
+                gradient: "from-[hsla(217,91%,50%,0.06)] to-transparent",
               },
               {
                 title: "Support",
                 description: "Handle common inquiries, collect information, and escalate complex issues to human agents seamlessly.",
                 icon: Phone,
-                gradient: "from-[hsla(200,90%,60%,0.1)] to-transparent",
+                gradient: "from-[hsla(199,89%,48%,0.06)] to-transparent",
               },
               {
                 title: "Scheduling",
                 description: "Book, reschedule, and confirm appointments automatically. Integrates with your existing calendar.",
                 icon: Calendar,
-                gradient: "from-[hsla(36,100%,55%,0.1)] to-transparent",
+                gradient: "from-[hsla(230,70%,55%,0.06)] to-transparent",
               },
             ].map((item) => (
               <div key={item.title} className={`glass-card-hover rounded-2xl p-8 space-y-4 hover-lift-3d holo-border bg-gradient-to-br ${item.gradient}`}>
@@ -192,7 +192,7 @@ export default function Home() {
             <p className="text-body-large text-muted-foreground mb-10 max-w-lg mx-auto">
               Join hundreds of businesses using ConvoBridge to scale customer communication.
             </p>
-            <Button size="lg" className="rounded-xl text-base px-8 bg-primary text-primary-foreground hover:brightness-110 shadow-[0_0_30px_-5px_hsla(36,100%,50%,0.3)]">
+            <Button size="lg" className="rounded-xl text-base px-8 bg-primary text-primary-foreground hover:brightness-110 shadow-[0_0_30px_-5px_hsla(217,91%,50%,0.3)]">
               Start Free Trial
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>

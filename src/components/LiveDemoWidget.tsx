@@ -29,8 +29,8 @@ function WaveformBars({ active, count = 7 }: { active: boolean; count?: number }
           style={{
             width: "3px",
             background: active
-              ? `linear-gradient(180deg, hsl(200 90% 60%), hsl(36 100% 55%))`
-              : "hsla(0 0% 100% / 0.1)",
+              ? `linear-gradient(180deg, hsl(217 91% 50%), hsl(199 89% 48%))`
+              : "hsla(217 91% 50% / 0.1)",
             height: active ? `${14 + Math.random() * 26}px` : "6px",
             animation: active ? `waveform-bar 1.2s ease-in-out ${i * 0.12}s infinite alternate` : "none",
           }}
@@ -91,9 +91,9 @@ export function LiveDemoWidget({ variant = "floating", agentConfig, testScenario
     return (
       <div className="relative w-full max-w-md glass-card rounded-3xl overflow-hidden holo-border glass-shimmer">
         {/* Top bar */}
-        <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/[0.06]">
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-border">
           <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center backdrop-blur-sm border border-white/[0.06]">
+            <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/10">
               <Phone className="h-4 w-4 text-primary" />
             </div>
             <div>
@@ -109,9 +109,9 @@ export function LiveDemoWidget({ variant = "floating", agentConfig, testScenario
             {isConnected && callStartTime && <CallTimer startTime={callStartTime} />}
             <div className={cn(
               "h-2.5 w-2.5 rounded-full",
-              isConnected ? "bg-emerald-400 shadow-[0_0_8px_hsla(160,80%,50%,0.5)] animate-pulse" :
-              isConnecting ? "bg-amber-400 shadow-[0_0_8px_hsla(36,100%,50%,0.4)] animate-pulse" :
-              "bg-white/20"
+              isConnected ? "bg-emerald-500 shadow-[0_0_8px_hsla(160,80%,40%,0.5)] animate-pulse" :
+              isConnecting ? "bg-primary shadow-[0_0_8px_hsla(217,91%,50%,0.4)] animate-pulse" :
+              "bg-muted-foreground/30"
             )} />
           </div>
         </div>
@@ -119,7 +119,7 @@ export function LiveDemoWidget({ variant = "floating", agentConfig, testScenario
         {/* Main content */}
         <div className="p-6">
           {error && (
-            <div className="mb-4 flex items-center gap-2 rounded-xl border border-destructive/20 bg-destructive/5 p-3 text-sm text-destructive backdrop-blur-sm">
+            <div className="mb-4 flex items-center gap-2 rounded-xl border border-destructive/20 bg-destructive/5 p-3 text-sm text-destructive">
               <AlertCircle className="h-4 w-4 flex-shrink-0" />
               <span>{error}</span>
             </div>
@@ -129,18 +129,11 @@ export function LiveDemoWidget({ variant = "floating", agentConfig, testScenario
             <div className="space-y-6 animate-fade-in">
               <div className="flex flex-col items-center py-8 space-y-4">
                 <div className="relative">
-                  {/* Holographic glow ring */}
-                  <div className="absolute inset-0 rounded-full blur-xl opacity-30"
-                    style={{ background: "conic-gradient(from 0deg, hsl(280 80% 65%), hsl(200 90% 60%), hsl(36 100% 55%), hsl(330 80% 60%), hsl(280 80% 65%))" }}
+                  <div className="absolute inset-0 rounded-full blur-xl opacity-20"
+                    style={{ background: "conic-gradient(from 0deg, hsl(217 91% 50%), hsl(199 89% 48%), hsl(230 70% 55%), hsl(217 91% 50%))" }}
                   />
-                  <div className="relative h-20 w-20 rounded-full flex items-center justify-center"
-                    style={{
-                      background: "hsla(240 8% 12% / 0.8)",
-                      border: "1px solid hsla(0 0% 100% / 0.1)",
-                      boxShadow: "inset 0 1px 0 hsla(0 0% 100% / 0.05)",
-                    }}
-                  >
-                    <Mic className="h-7 w-7 text-white/60" />
+                  <div className="relative h-20 w-20 rounded-full flex items-center justify-center bg-card border border-border shadow-sm">
+                    <Mic className="h-7 w-7 text-muted-foreground" />
                   </div>
                 </div>
                 <div className="text-center space-y-1">
@@ -148,7 +141,7 @@ export function LiveDemoWidget({ variant = "floating", agentConfig, testScenario
                   <p className="text-xs text-muted-foreground">Talk to our AI agent in real-time</p>
                 </div>
               </div>
-              <Button onClick={handleCall} size="lg" className="w-full rounded-xl bg-primary text-primary-foreground hover:brightness-110 shadow-[0_0_30px_-5px_hsla(36,100%,50%,0.3)]">
+              <Button onClick={handleCall} size="lg" className="w-full rounded-xl bg-primary text-primary-foreground hover:brightness-110 shadow-[0_0_30px_-5px_hsla(217,91%,50%,0.2)]">
                 <Phone className="mr-2 h-4 w-4" />
                 Start Live Call
               </Button>
@@ -158,19 +151,14 @@ export function LiveDemoWidget({ variant = "floating", agentConfig, testScenario
           {isConnecting && (
             <div className="flex flex-col items-center py-10 space-y-5 animate-fade-in">
               <div className="relative">
-                <div className="h-16 w-16 rounded-full flex items-center justify-center"
-                  style={{
-                    background: "hsla(240 8% 12% / 0.6)",
-                    border: "1px solid hsla(36 100% 55% / 0.3)",
-                  }}
-                >
+                <div className="h-16 w-16 rounded-full flex items-center justify-center bg-card border border-primary/20">
                   <Loader2 className="h-7 w-7 text-primary animate-spin" />
                 </div>
                 <div className="absolute inset-0 rounded-full animate-ping opacity-20"
-                  style={{ border: "2px solid hsl(36 100% 55%)" }} />
+                  style={{ border: "2px solid hsl(var(--primary))" }} />
               </div>
               <p className="text-sm text-muted-foreground">Establishing connection...</p>
-              <Button onClick={handleEnd} variant="outline" size="sm" className="rounded-xl border-white/10 bg-white/5">
+              <Button onClick={handleEnd} variant="outline" size="sm" className="rounded-xl">
                 Cancel
               </Button>
             </div>
@@ -188,15 +176,12 @@ export function LiveDemoWidget({ variant = "floating", agentConfig, testScenario
                 <input
                   type="range" min="0" max="1" step="0.05" value={volume}
                   onChange={(e) => setVolume(Number(e.target.value))}
-                  className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer accent-primary"
-                  style={{ background: "hsla(0 0% 100% / 0.1)" }}
+                  className="flex-1 h-1.5 rounded-full appearance-none cursor-pointer accent-primary bg-muted"
                 />
               </div>
 
               {agentConfig && (
-                <div className="rounded-xl p-3 text-xs text-muted-foreground space-y-1"
-                  style={{ background: "hsla(0 0% 100% / 0.03)", border: "1px solid hsla(0 0% 100% / 0.05)" }}
-                >
+                <div className="rounded-xl p-3 text-xs text-muted-foreground space-y-1 bg-card border border-border">
                   <p><span className="font-medium text-foreground">Agent:</span> {agentConfig.name}</p>
                   <p><span className="font-medium text-foreground">Voice:</span> {agentConfig.voice}</p>
                 </div>
@@ -217,12 +202,12 @@ export function LiveDemoWidget({ variant = "floating", agentConfig, testScenario
   return (
     <div className="fixed bottom-6 right-6 z-50">
       <div className="w-80 glass-card rounded-2xl overflow-hidden holo-border">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-white/[0.06]">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-border">
           <div className="flex items-center gap-2">
             <div className={cn(
               "h-2 w-2 rounded-full",
-              isConnected ? "bg-emerald-400 shadow-[0_0_6px_hsla(160,80%,50%,0.5)] animate-pulse" :
-              isConnecting ? "bg-amber-400 animate-pulse" : "bg-white/20"
+              isConnected ? "bg-emerald-500 shadow-[0_0_6px_hsla(160,80%,40%,0.5)] animate-pulse" :
+              isConnecting ? "bg-primary animate-pulse" : "bg-muted-foreground/30"
             )} />
             <span className="text-sm font-semibold text-foreground">ConvoBridge</span>
           </div>
@@ -257,8 +242,7 @@ export function LiveDemoWidget({ variant = "floating", agentConfig, testScenario
                 <Volume2 className="h-3 w-3 text-muted-foreground flex-shrink-0" />
                 <input type="range" min="0" max="1" step="0.05" value={volume}
                   onChange={(e) => setVolume(Number(e.target.value))}
-                  className="flex-1 h-1 rounded-full appearance-none cursor-pointer accent-primary"
-                  style={{ background: "hsla(0 0% 100% / 0.1)" }}
+                  className="flex-1 h-1 rounded-full appearance-none cursor-pointer accent-primary bg-muted"
                 />
               </div>
             </div>

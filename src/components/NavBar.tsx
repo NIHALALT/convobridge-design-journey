@@ -37,7 +37,7 @@ export default function NavBar() {
             <span className="text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer">Login</span>
           </NavLink>
           <NavLink to="/dashboard">
-            <Button size="sm" className="rounded-xl px-5 bg-primary text-primary-foreground hover:brightness-110 shadow-[0_0_20px_-5px_hsla(36,100%,50%,0.3)]">
+            <Button size="sm" className="rounded-xl px-5 bg-primary text-primary-foreground hover:brightness-110 shadow-[0_0_20px_-5px_hsla(217,91%,50%,0.3)]">
               Get Started
             </Button>
           </NavLink>
@@ -53,7 +53,7 @@ export default function NavBar() {
       </div>
 
       {open && (
-        <div className="md:hidden glass-card border-t border-white/[0.06]">
+        <div className="md:hidden glass-card border-t border-border">
           <div className="px-6 py-4 space-y-1">
             {[
               { to: '/', label: 'Home' },
@@ -70,7 +70,7 @@ export default function NavBar() {
                 {link.label}
               </NavLink>
             ))}
-            <div className="pt-4 mt-2 border-t border-white/[0.06] flex flex-col gap-2">
+            <div className="pt-4 mt-2 border-t border-border flex flex-col gap-2">
               <NavLink to="/login" className="w-full" onClick={() => setOpen(false)}>
                 <Button variant="ghost" size="sm" className="w-full justify-start">Login</Button>
               </NavLink>
