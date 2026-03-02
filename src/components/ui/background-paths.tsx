@@ -51,7 +51,7 @@ export function BackgroundPaths({
 }: {
   title?: string;
 }) {
-  const words = title.split(" ");
+  const words = title.split(" ").filter(Boolean);
 
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden bg-background">
@@ -60,52 +60,54 @@ export function BackgroundPaths({
         <FloatingPaths position={-1} />
       </div>
 
-      <div className="relative z-10 container mx-auto px-4 md:px-6 text-center">
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 2 }}
-          className="max-w-4xl mx-auto"
-        >
-          <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold mb-8 tracking-tighter">
-            {words.map((word, wordIndex) => (
-              <span key={wordIndex} className="inline-block mr-4 last:mr-0">
-                {word.split("").map((letter, letterIndex) => (
-                  <motion.span
-                    key={letterIndex}
-                    initial={{ y: 100, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{
-                      delay: wordIndex * 0.1 + letterIndex * 0.03,
-                      type: "spring",
-                      stiffness: 150,
-                      damping: 25,
-                    }}
-                    className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-foreground to-foreground/80"
-                  >
-                    {letter}
-                  </motion.span>
-                ))}
-              </span>
-            ))}
-          </h1>
+      {words.length > 0 && (
+        <div className="relative z-10 container mx-auto px-4 md:px-6 text-center">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 2 }}
+            className="max-w-4xl mx-auto"
+          >
+            <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold mb-8 tracking-tighter">
+              {words.map((word, wordIndex) => (
+                <span key={wordIndex} className="inline-block mr-4 last:mr-0">
+                  {word.split("").map((letter, letterIndex) => (
+                    <motion.span
+                      key={letterIndex}
+                      initial={{ y: 100, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      transition={{
+                        delay: wordIndex * 0.1 + letterIndex * 0.03,
+                        type: "spring",
+                        stiffness: 150,
+                        damping: 25,
+                      }}
+                      className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-foreground to-foreground/80"
+                    >
+                      {letter}
+                    </motion.span>
+                  ))}
+                </span>
+              ))}
+            </h1>
 
-          <div className="inline-block group relative">
-            <Button
-              variant="outline"
-              size="lg"
-              className="relative text-lg px-8 py-6 rounded-2xl bg-background/50 backdrop-blur-sm border-border hover:bg-accent/10 transition-all duration-300 group-hover:-translate-y-0.5"
-            >
-              <span className="opacity-90 group-hover:opacity-100 transition-opacity">
-                Discover Excellence
-              </span>
-              <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">
-                →
-              </span>
-            </Button>
-          </div>
-        </motion.div>
-      </div>
+            <div className="inline-block group relative">
+              <Button
+                variant="outline"
+                size="lg"
+                className="relative text-lg px-8 py-6 rounded-2xl bg-background/50 backdrop-blur-sm border-border hover:bg-accent/10 transition-all duration-300 group-hover:-translate-y-0.5"
+              >
+                <span className="opacity-90 group-hover:opacity-100 transition-opacity">
+                  Discover Excellence
+                </span>
+                <span className="ml-2 inline-block transition-transform group-hover:translate-x-1">
+                  →
+                </span>
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

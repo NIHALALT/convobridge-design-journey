@@ -5,6 +5,8 @@ import { AuroraBackground } from "@/components/AuroraBackground";
 import { GridPattern } from "@/components/GridPattern";
 import { OrbitalRings } from "@/components/OrbitalRings";
 import { HolographicOrb } from "@/components/HolographicOrb";
+import { BackgroundPaths } from "@/components/ui/background-paths";
+import { CpuArchitecture } from "@/components/ui/cpu-architecture";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 
@@ -17,7 +19,18 @@ export default function Home() {
       <section className="relative pt-28 pb-20 md:pt-36 md:pb-28 overflow-hidden">
         <AuroraBackground />
         <GridPattern className="opacity-40" />
+        
+        {/* Background Paths — animated flowing lines */}
+        <div className="absolute inset-0 pointer-events-none opacity-30">
+          <BackgroundPaths title="" />
+        </div>
+
         <OrbitalRings className="top-1/2 right-0 -translate-y-1/2 translate-x-1/4 hidden lg:block" size={600} />
+
+        {/* CPU Architecture — tech accent */}
+        <div className="absolute bottom-8 right-8 hidden lg:block opacity-40 pointer-events-none w-[320px] h-[160px]">
+          <CpuArchitecture text="AI" className="text-primary/50" />
+        </div>
 
         {/* 3D Holographic Orb — hero accent */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hidden lg:block opacity-20 pointer-events-none">
