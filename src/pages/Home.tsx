@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { ArrowRight, Phone, BarChart3, Calendar, Globe2, Sparkles, Zap, Shield, Clock, ChevronRight, Play, Star } from "lucide-react";
+import { ArrowRight, Phone, BarChart3, Calendar, Globe2, Zap, Shield, Clock, ChevronRight, Play, Star } from "lucide-react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { LiveDemoWidget } from "@/components/LiveDemoWidget";
@@ -8,6 +8,8 @@ import { GridPattern } from "@/components/GridPattern";
 import { HolographicOrb } from "@/components/HolographicOrb";
 import { BackgroundPaths } from "@/components/ui/background-paths";
 import { CpuArchitecture } from "@/components/ui/cpu-architecture";
+import { PlatformShowcase } from "@/components/PlatformShowcase";
+import { ParticleField } from "@/components/ParticleField";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
 
@@ -28,7 +30,7 @@ function Reveal({ children, className, delay = 0 }: { children: React.ReactNode;
   );
 }
 
-/* ─── Trusted logos strip (silhouette style) ─── */
+/* ─── Trusted logos strip ─── */
 function TrustStrip() {
   const brands = ["Google", "Stripe", "Shopify", "Slack", "Notion"];
   return (
@@ -71,6 +73,9 @@ export default function Home() {
         {/* Layered GPU backgrounds */}
         <AuroraBackground />
         <GridPattern className="opacity-30" />
+
+        {/* Interactive particle field */}
+        <ParticleField className="opacity-60" count={50} />
 
         <div className="absolute inset-0 pointer-events-none opacity-20">
           <BackgroundPaths title="" />
@@ -147,7 +152,7 @@ export default function Home() {
               </Reveal>
             </div>
 
-            {/* Demo widget — elevated with depth */}
+            {/* Demo widget */}
             <Reveal delay={0.3} className="hidden lg:block">
               <div className="relative">
                 <div className="absolute -inset-8 rounded-[32px] bg-gradient-to-br from-primary/[0.04] to-transparent blur-2xl" />
@@ -161,7 +166,6 @@ export default function Home() {
           <TrustStrip />
         </motion.div>
 
-        {/* Bottom gradient fade */}
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent pointer-events-none" />
       </section>
 
@@ -225,6 +229,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ═══════════ PLATFORM SHOWCASE ═══════════ */}
+      <PlatformShowcase />
+
       {/* ═══════════ METRICS BAND ═══════════ */}
       <section className="relative border-t border-b border-border/50">
         <div className="max-w-7xl mx-auto px-6 md:px-10 py-20">
@@ -253,9 +260,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ═══════════ USE CASES ═══════════ */}
+      {/* ═══════════ USE CASES with Particles ═══════════ */}
       <section className="relative py-28 md:py-36 lg:py-44 overflow-hidden">
         <AuroraBackground className="opacity-40" />
+        <ParticleField className="opacity-40" count={35} color="199,89%,48%" />
         <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10">
           <Reveal>
             <div className="max-w-2xl mb-16">
@@ -291,7 +299,6 @@ export default function Home() {
             ].map((item, i) => (
               <Reveal key={item.title} delay={i * 0.1}>
                 <div className="group relative glass-card-hover rounded-3xl p-8 space-y-5 hover-lift-3d holo-border h-full">
-                  {/* Subtle top accent glow */}
                   <div
                     className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-700"
                     style={{ background: `linear-gradient(90deg, transparent, hsla(${item.accent} / 0.4), transparent)` }}
@@ -374,9 +381,7 @@ export default function Home() {
         <div className="relative z-10 max-w-5xl mx-auto px-6 md:px-10 py-28 md:py-36 text-center">
           <Reveal>
             <div className="glass-card rounded-[32px] p-12 md:p-20 holo-border glass-shimmer relative overflow-hidden">
-              {/* Ambient glow */}
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-1 rounded-full bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-
               <h2 className="text-h2 mb-6 !tracking-[-0.03em]">
                 Ready to never miss
                 <br />
