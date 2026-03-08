@@ -79,7 +79,7 @@
   }
 
   h1, .text-display {
-    @apply text-5xl md:text-6xl lg:text-7xl leading-[1.08] tracking-[-0.03em] font-extrabold;
+    @apply text-5xl md:text-6xl lg:text-[5.25rem] leading-[1.04] tracking-[-0.04em] font-extrabold;
   }
 
   h2, .text-h2 {
